@@ -1,0 +1,119 @@
+@charset "UTF-8";
+/*!
+* Start Bootstrap - Stylish Portfolio v6.0.6 (https://startbootstrap.com/theme/stylish-portfolio)
+* Copyright 2013-2023 Start Bootstrap
+* Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-stylish-portfolio/blob/master/LICENSE)
+*/
+/*!
+ * Bootstrap  v5.2.3 (https://getbootstrap.com/)
+ * Copyright 2011-2022 The Bootstrap Authors
+ * Copyright 2011-2022 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+ */
+
+header{
+  background-color: rgb(250, 236, 232);
+  width: 1360px;
+  height: 100px;
+  margin: 0px;}
+ 
+body{
+    background-color: rgb(255, 203, 185);
+}
+
+.contenedor{
+    margin: 0px auto;
+    width: 1024px;
+    margin-top: 20px;
+}
+ul {
+    display: flex;
+    justify-content: flex-end;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  li {
+    display: inline-block;
+    margin-right: 20px;
+  }
+  
+  a {
+    display: block;
+    padding: 5px;
+    text-decoration: none;
+  }
+  #logo{
+    display: flex;
+    justify-content: flex-start;
+    margin-right: 700px;
+    font-size: 25px;
+    padding: 21px;
+    background-color: rgb(255, 203, 185);
+  }
+
+
+
+ h1{
+    display: flex;
+    justify-content: flex-start;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+ }
+h2{
+    text-align: center;
+}
+ 
+.card-container {
+  max-width: 1200px;
+  margin-top: 50px;
+  margin-left: 65px;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+}
+
+.card {
+  position: relative;
+  width: 300px;
+  height: 450px;
+  margin: 20px;
+  padding: 20px;
+  border-radius: 10px;
+  background-color:  rgb(255, 203, 185);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+#dos{
+  margin-top: 50px;
+}
+
+#tres{
+  margin-top: 50px;
+}
+
+.card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.card h2 {
+  margin-top: 20px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.card p {
+  margin-top: 10px;
+  font-size: 16px;
+  line-height: 1.5;
+  height: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

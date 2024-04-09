@@ -1,0 +1,205 @@
+<script>
+  function arrojarError(mensaje) {
+    it(mensaje, () => {
+        expect(false).to.be.equal(true);
+    });
+}
+
+function simplificarString(cadena){
+    // Ignorar Case Sensitivity - Convertir a Mayúsculas:
+    cadena = cadena.toUpperCase();
+    // Ignorar diacríticos (tildes, diéresis) - reemplazar por versión simple
+    cadena = cadena.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    // Ignorar signos de puntuación y caracteres especiales (excepto espacios) - los Borra
+    cadena =  cadena.normalize("NFD").replace(/[^0-9a-zA-Z\s]/g, "");
+    // Corregir ocasiones donde haya ingresado doble-espacio: lo reemplaza por espaciado simple.
+    cadena = cadena.replace(/ +(?= )/g, '')
+    // Ignorar Espacios al principio y final - Limpiar
+    cadena = cadena.trim();
+    // logger.test(stringObtenido)
+    return cadena
+}
+
+//Función que se encarga de mostrar un error por cada caso de prueba
+function mostrarErroresPruebas(arrayMensajes){
+    arrayMensajes.forEach(mensajeDeError=>{
+        arrojarError(mensajeDeError)
+    })
+}
+
+const validarElemento = (padre, selector, mensajeError) => {
+    const elemento = padre?.querySelector(selector);
+    if (!elemento) {
+        arrojarError(mensajeError);
+    }
+    return elemento;
+};
+
+
+const adjetivos = ["primer", "segundo", "tercer", "cuarto", "quinto", "sexto", "séptimo", "octavo", "noveno", "décimo", "decimoprimer", "decimosegundo", "decimotercer"];
+
+const adjetivosF = ["primera", "segunda", "tercera", "cuarta", "quinta", "sexta", "séptima", "octava", "novena", "décima", "decimoprimera", "decimosegunda", "decimotercera"];
+
+
+//----------------------> Paso 1 - Estructura HTML <------------------
+
+//Primero captamos el main y el header para asegurarnos que si borraron la etiqueta por error no se rompa la validación
+let mainTag = document.querySelector("main");
+
+if (mainTag != null) {
+    let h2Alumno = document.getElementById("mensajeResultado")
+    let cajaIconoAlu = document.querySelector(".cajaIcono")
+    let cajaFormularioAlu = document.querySelector(".cajaFormulario")
+
+    //Valido que esten todos los elementos necesarios para el ejercicio
+    let textoAlu = validarElemento(cajaIconoAlu, "#mensajeResultado", 'Dentro del div "cajaIcono", debes tener el H2 con id "mensajeResultado". Revisa no haberlo borrado ni cambiado su clase.')
+    let inputNombreAlu = validarElemento(cajaFormularioAlu, "#inputNombre", 'Dentro del div "cajaFormulario", debes tener el INPUT con id "inputNombre". Revisa no haberlo borrado ni cambiado su clase.')
+    let inputEdadAlu = validarElemento(cajaFormularioAlu, "#inputEdad", 'Dentro del div "cajaFormulario", debes tener el INPUT con id "inputEdad". Revisa no haberlo borrado ni cambiado su clase.')
+    let buttonAlu = validarElemento(cajaFormularioAlu, "button", 'Dentro del div "cajaFormulario", debes tener el BUTTON brindado por el ejercicio. Revisa no haberlo borrado.')
+    
+    if(buttonAlu != null){
+        //Validar que tenga atributo onclick
+        if(buttonAlu.getAttribute("onclick") == null){
+            arrojarError('Dentro del div "cajaFormulario", el BUTTON debe tener el atributo onclick. Revisa no haberlo borrado.')
+        }else if(buttonAlu.getAttribute("onclick") != "inscribir()"){
+            logger.test(buttonAlu.getAttribute("onclick"))
+            arrojarError('Dentro del div "cajaFormulario", el BUTTON debe tener en su atributo onclick el valor "inscribir()" - Revisa no haberlo borrado.')
+        }
+    }
+}
+
+// Modificamos el comportamiento de alert() y prompt() para que nos sirvan para el test
+//Seteo variables para usar luego
+
+let dhsPromptArray = [];
+let dhsAlertArray = [];
+let dhsPromptResponseSimulado = [];
+dhsPromptResponseSimulado = [0]
+let seguirValidando = true;
+let errorEncontrado = true
+
+
+let funcionInscrbir = check('functionDeclaration', 'inscrbir')
+
+if(!funcionInscrbir.exists){
+        arrojarError("Debes declarar la función llamada inscrbir()")
+}else{
+    
+    //EJECUTO LA FUNCIÓN QUE ESTOY TESTEANDO
+    try{
+        inscrbir();
+    } catch(e){
+        arrojarError("Hay un error de sintaxis en tu código: " + e.message)
+    }
+
+
+    if(!funcionInscrbir.toString().includes('document.getElementById("inputNombre")')){
+        arrojarError('Debes capturar al elemento input con id "inputNombre", para obtener el valor que ingresa el usuario.')
+    }else if(!funcionInscrbir.toString().includes('.value')){
+        arrojarError("Para capturar el valor ingresado por el usuario utilizamos .value")
+    }else if(!funcionInscrbir.toString().includes('document.getElementById("inputEdad")')){
+        arrojarError('Debes capturar al elemento input con id "inputEdad", para obtener el valor que ingresa el usuario.')
+    }
+
+    
+    
+    
+    let existeIf = true
+    let existeElse = true
+    let chequeoIfElse = funcionInscrbir
+    if(!chequeoIfElse.toString().includes("if (")){
+        seguirValidando = false
+        existeIf = false
+        arrojarError("Dentro de la funcion inscrbir() debes crear la sentencia if, para evaluar las respuesta del usuario con la respuesta esperada como lo indica la consigna.")
+    }
+    if((!chequeoIfElse.toString().includes('else {'))){
+            seguirValidando = false
+            existeElse = false
+            arrojarError("Debes crear la sentencia else, para mostrar el mensaje si la respuesta del usuario no coincide con la respuesta esperada, como lo indica la consigna.")
+    }
+
+    if(existeIf && existeElse){
+        
+        if(!funcionInscrbir.toString().includes('document.getElementById("mensajeResultado")')){
+                seguirValidando = false
+            arrojarError('Dentro de la sentencia if, debes mostrar el mensaje al usuario con el texto que indica la consigna si la edad del usuario es mayor o igual que la edad requerida para comprar la entrada.')
+        }else if(!funcionInscrbir.toString().includes(".innerHTML")){
+            seguirValidando = false
+            arrojarError("Recuerda que para modificar el contenido de un elemento usamos innerHTML.")
+        }
+    //     else if(!funcionInscrbir.toString().includes("¡Perfecto! Se enviará la entrada a tu email.")){
+    //         seguirValidando = false
+    //         arrojarError('El elemento parrafo con id "parrafo-mensaje" debe mostrar el mensaje que indica la consigna si la edad ingresada por el usuario es mayor o igual a la edad requerida para comprar la entrada.')
+
+    // }
+    // else if(!funcionInscrbir.toString().includes("Lo sentimos, esta película es para mayores de 13. No tiene la edad necesaria.")){
+    //         seguirValidando = false
+    //         arrojarError('Dentro de la sentencia else debes mostrar el mensaje que le indica al usuario que la edad ingresada NO es mayor o igual a la edad requerida para comprar la entrada. Recuerda que para modificar el contenido de un elemento utilizamos .innerHTML si ya lo colocaste revisa de haberlo escrito correctamente.')
+        //}
+        else if(!funcionInscrbir.toString().includes("&&")){
+            //  seguirValidando = false
+            arrojarError("Recuerda que para la condición de edad, es importante utilizar el operador >= para comparar si la edad que ingreso el usuario es mayor o igual a la edad requerida para comprar la entrada.")
+        }
+    }
+
+    //Creo variables que me serviran de flags a la hora de testear los distintos casos, para acumular la cantidad de errores y mensajes con los casos con los que se probó y los resultados que se obtuvo para cada uno.
+    let erroresNombre = []
+    let erroresConcat = []
+    let ordenCasos = ["A)", "B)", "C)", "D)"]
+    let contadorError = 0
+    //Creo la variable de valores que quiero usar para testear
+    let randomNumero1 = Math.floor(Math.random() * 17) + 1;
+    let randomNumero2 = Math.floor(Math.random() * (100 - 18 + 1)) + 18;
+    const valores = [["Alejandro",randomNumero1], ["Josefina",18],["Marta",randomNumero2]]
+    logger.test(randomNumero1,randomNumero2)
+
+    arrayTextoEsperado = ["Lo sentimos, esta película es para mayores de 13. No tiene la edad necesaria.","¡Perfecto! Se enviará la entrada a tu email.","¡Perfecto! Se enviará la entrada a tu email."]
+    //Si tiene los elementos básicos (prompts y alert) esperados para cumplir el objetivo, entro a probar casos
+//     let parrafoAlumno = document.getElementById("parrafo-mensaje")
+   
+//     if(seguirValidando){
+//         valores.forEach((valorASimular, contadorCasos) =>{
+//             //Ejecuto la función que resetea y pushea distintos valores de prueba al código del alumno pasandole un par de valores del array de arrays
+//                 let comprarEntradaAlumno1 = document.getElementById("input-edad")
+//                 comprarEntradaAlumno1.value = valorASimular[0]
+
+//                 comprarEntrada()
+//                 //Guardo el mensaje alertado resultante
+//                 let simulacionIngresoTest1 = document.getElementById("parrafo-mensaje")
+                
+                
+//                 // //Seteo un texto base para errores
+//                 let textoBaseErrores = "CASO " + ordenCasos[contadorCasos] + " Cuando el usuario ingresa la edad "+ valorASimular + ', el mensaje del parrafo deberia ser "' + arrayTextoEsperado[contadorCasos] + '". El usuario recibe: '
+
+//                 //Evalúo los distintos errores posibles:
+//                 // if(cambiarClaveAlumno1.value == cambiarClaveAlumno2.value){
+//                     if(simplificarString(simulacionIngresoTest1.innerHTML)!= simplificarString(arrayTextoEsperado[contadorCasos])){
+//                     erroresNombre.push(textoBaseErrores + simulacionIngresoTest1.innerHTML + " ❌");
+//                     }
+//                 // }
+//                 else{
+//                     erroresNombre.push(textoBaseErrores + simulacionIngresoTest1.innerHTML + " ✅");
+//                 } 
+//             }) 
+        
+//         let contadorErroresValor = 0
+//             erroresNombre.forEach((error) => {
+//                 if (error.includes("❌")) {
+//                     contadorErroresValor += 1
+//                 }
+//             })
+
+        
+//         if(contadorErroresValor >= 1){
+//             arrojarError("Algo anda mal con la condicion del if, ttu codigo no se comporta de la manera esperada. Se probo tu codigo con los siguientes casos: ")
+//             mostrarErroresPruebas(erroresNombre)
+//         }
+//     }
+// }
+
+
+}
+
+
+
+</script>
